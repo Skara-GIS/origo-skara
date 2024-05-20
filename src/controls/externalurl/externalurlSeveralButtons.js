@@ -5,6 +5,8 @@ import replacer from '../../utils/replacer';
 const externalurlSeveralButtons = function externalurlSeveralButtons(options = {}) {
   const mainbuttonTooltipText = options.tooltipText || 'Visa kartan i en extern karttjänst';
   const links = options.links;
+  const clsSettings = options.cls || 'flex column'; // SKA options for specific CLS
+  const tooltipPlacementSettings = options.tooltipPlacement || 'east'; // SKA options for specific tooltipPlacement
   let map;
   let isMainButtonActive = false;
   let viewer;
@@ -39,7 +41,7 @@ const externalurlSeveralButtons = function externalurlSeveralButtons(options = {
     onInit() {
       containerElement = El({
         tagName: 'div',
-        cls: 'flex column'
+        cls: `${clsSettings}` // SKA options for specific CLS
       });
 
       externalUrlMainButton = Button({
@@ -59,7 +61,7 @@ const externalurlSeveralButtons = function externalurlSeveralButtons(options = {
           cls: 'o-measure-length padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden',
           icon: buttonImage,
           tooltipText,
-          tooltipPlacement: 'east',
+          tooltipPlacement: `${tooltipPlacementSettings}`, // SKA options for specific tooltipPlacement
           click() {
             const mapView = map.getView();
             const center = mapView.getCenter();

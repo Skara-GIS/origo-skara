@@ -12,6 +12,8 @@ import * as drawStyles from '../style/drawstyles';
 import replacer from '../utils/replacer';
 
 const Measure = function Measure({
+  cls: clsSettings = 'flex column', // SKA options for specific CLS
+  tooltipPlacement: tooltipPlacementSettings = 'east', // SKA options for specific tooltipPlacement
   default: defaultMeasureTool = 'length',
   measureTools = ['length', 'area'],
   elevationServiceURL,
@@ -704,7 +706,7 @@ const Measure = function Measure({
           },
           icon: '#ic_linear_scale_24px',
           tooltipText: 'Visa delsträckor',
-          tooltipPlacement: 'east'
+          tooltipPlacement: `${tooltipPlacementSettings}` // SKA options for specific tooltipPlacement
         });
         buttons.push(showSegmentLabelButton);
       }
@@ -735,7 +737,7 @@ const Measure = function Measure({
       if (lengthTool || areaTool || elevationTool || bufferTool) {
         measureElement = El({
           tagName: 'div',
-          cls: 'flex column'
+          cls: `${clsSettings}` // SKA options for specific CLS
         });
 
         measureButton = Button({
@@ -759,7 +761,7 @@ const Measure = function Measure({
             data: { tool: 'length' },
             icon: '#ic_timeline_24px',
             tooltipText: 'Längd',
-            tooltipPlacement: 'east'
+            tooltipPlacement: `${tooltipPlacementSettings}` // SKA options for specific tooltipPlacement
           });
           buttons.push(lengthToolButton);
           defaultButton = lengthToolButton;
@@ -775,7 +777,7 @@ const Measure = function Measure({
             data: { tool: 'area' },
             icon: '#o_polygon_24px',
             tooltipText: 'Yta',
-            tooltipPlacement: 'east'
+            tooltipPlacement: `${tooltipPlacementSettings}` // SKA options for specific tooltipPlacement
           });
           buttons.push(areaToolButton);
         }
@@ -790,7 +792,7 @@ const Measure = function Measure({
             data: { tool: 'elevation' },
             icon: '#ic_height_24px',
             tooltipText: 'Höjd',
-            tooltipPlacement: 'east'
+            tooltipPlacement: `${tooltipPlacementSettings}` // SKA options for specific tooltipPlacement
           });
           buttons.push(elevationToolButton);
         }
@@ -805,7 +807,7 @@ const Measure = function Measure({
             data: { tool: 'buffer' },
             icon: '#ic_adjust_24px',
             tooltipText: 'Buffer',
-            tooltipPlacement: 'east'
+            tooltipPlacement: `${tooltipPlacementSettings}` // SKA options for specific tooltipPlacement
           });
           buttons.push(bufferToolButton);
         }
@@ -831,7 +833,7 @@ const Measure = function Measure({
             },
             icon: '#ic_undo_24px',
             tooltipText: 'Ångra',
-            tooltipPlacement: 'east'
+            tooltipPlacement: `${tooltipPlacementSettings}` // SKA options for specific tooltipPlacement
           });
           buttons.push(undoButton);
           clearButton = Button({
@@ -843,7 +845,7 @@ const Measure = function Measure({
             },
             icon: '#ic_delete_24px',
             tooltipText: 'Rensa',
-            tooltipPlacement: 'east'
+            tooltipPlacement: `${tooltipPlacementSettings}`
           });
           buttons.push(clearButton);
         }
@@ -858,7 +860,7 @@ const Measure = function Measure({
             },
             icon: '#fa-magnet',
             tooltipText: 'Snappning',
-            tooltipPlacement: 'east'
+            tooltipPlacement: `${tooltipPlacementSettings}` // SKA options for specific tooltipPlacement
           });
           buttons.push(toggleSnapButton);
         }
