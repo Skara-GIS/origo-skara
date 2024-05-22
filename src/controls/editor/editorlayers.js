@@ -72,6 +72,14 @@ export default function editorLayers(editableLayers, v, optOptions = {}) {
     e.stopPropagation();
   }
 
+  // SKA Update visibility for a layer in editor
+  function updateLayerVisibility(layerName) {
+    editableLayers.forEach(layername => {
+      viewer.getLayer(layername).setVisible(false);
+    });
+    viewer.getLayer(layerName).setVisible(true);
+  }
+
   function addListener() {
     document.getElementById(target).addEventListener('changeDropdown', (e) => {
       e.stopImmediatePropagation(e);
@@ -79,6 +87,7 @@ export default function editorLayers(editableLayers, v, optOptions = {}) {
       dispatcher.emitToggleEdit('edit', {
         currentLayer: e.detail.dataAttribute
       });
+      updateLayerVisibility(e.detail.dataAttribute); // SKA Update visibility for a layer in editor
     });
     document.addEventListener('toggleEdit', onToggleEdit);
     document.addEventListener('changeEdit', onChangeEdit);
