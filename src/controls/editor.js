@@ -7,7 +7,8 @@ const Editor = function Editor(options = {}) {
     autoForm = false,
     autoSave = true,
     isActive = true,
-    featureList = true
+    featureList = true,
+    icon = '#ic_edit_24px' // SKA default icon with opt-in for setting custom icon
   } = options;
   let editorButton;
   let target;
@@ -137,7 +138,7 @@ const Editor = function Editor(options = {}) {
         click() {
           toggleState();
         },
-        icon: '#ic_edit_24px',
+        icon, // SKA default icon with opt-in for setting custom icon
         tooltipText: 'Redigera',
         tooltipPlacement: 'east',
         state,
