@@ -10,7 +10,7 @@ export default function Main(options = {}) {
   const mapTools = El({ cls: 'o-maptools flex column relative transparent spacing-vertical-small align-start' });
   const miscTools = El({ cls: 'o-misc flex column relative transparent spacing-vertical-small' });
   const bottomTools = El({ cls: 'o-tools-bottom absolute transparent bottom-left width-full no-margin' });
-
+  // SKA custom CSS for toolbar with ska-tools
   return Component({
     getBottomTools: () => bottomTools,
     getNavigation: () => navigation,
@@ -18,7 +18,7 @@ export default function Main(options = {}) {
     getMiscTools: () => miscTools,
     render: function render() {
       return `<div id=${this.getId()} class="${cls}">
-                <div id="o-tools-left" class="box top-left transparent flex column">
+                <div id="o-tools-left" class="box top-left transparent flex column ska-tools">
                   ${navigation.render()}
                   ${mapTools.render()}
                   ${miscTools.render()}

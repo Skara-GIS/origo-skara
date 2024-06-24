@@ -2,10 +2,14 @@ import {
   Component, Button, Element as El, dom
 } from '../ui';
 
+// SKA Additional options for styling mapMenu with cls, tooltipPlacement and closeBtnStyle
 const Mapmenu = function Mapmenu({
   autoHide = 'never',
   closeIcon = '#ic_close_24px',
-  menuIcon = '#ic_menu_24px'
+  menuIcon = '#ic_menu_24px',
+  cls = 'top-right',
+  tooltipPlacement = 'west',
+  closeBtnStyle = { width: '100%' }
 } = {}) {
   let headerComponent;
   let contentComponent;
@@ -110,9 +114,9 @@ const Mapmenu = function Mapmenu({
       const menuButtonCls = isExpanded ? ' faded' : '';
       menuButton = Button({
         icon: menuIcon,
-        cls: `control icon-smaller medium round absolute light top-right${menuButtonCls}`,
+        cls: `control icon-smaller medium round absolute light ${cls}${menuButtonCls}`, // SKA Additional options for styling mapMenu with cls, tooltipPlacement and closeBtnStyle
         tooltipText: 'Meny',
-        tooltipPlacement: 'west',
+        tooltipPlacement, // SKA Additional options for styling mapMenu with cls, tooltipPlacement and closeBtnStyle
         click() {
           toggle();
         }
@@ -127,7 +131,7 @@ const Mapmenu = function Mapmenu({
       });
       headerComponent = El({
         cls: 'flex row justify-end',
-        style: { width: '100%' },
+        style: closeBtnStyle, // SKA Additional options for styling mapMenu with cls, tooltipPlacement and closeBtnStyle
         components: [closeButton]
       });
       contentComponent = Component({
@@ -136,7 +140,7 @@ const Mapmenu = function Mapmenu({
         }
       });
       mapMenu = El({
-        cls: 'absolute flex column top-right control box bg-white overflow-hidden z-index-top faded',
+        cls: `absolute flex column control box bg-white overflow-hidden z-index-top faded ${cls}`, // SKA Additional options for styling mapMenu with cls, tooltipPlacement and closeBtnStyle
         collapseX: true,
         components: [headerComponent, contentComponent]
       });
