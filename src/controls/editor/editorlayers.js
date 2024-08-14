@@ -9,6 +9,7 @@ let dropdown;
 
 export default function editorLayers(editableLayers, v, optOptions = {}) {
   viewer = v;
+  editableLayers.reverse(); // SKA reverse editableLayers
   function selectionModel(layerNames) {
     const selectOptions = layerNames.map((layerName) => {
       const obj = {};
