@@ -1,4 +1,3 @@
-import Point from 'ol/geom/Point'; // SKA for multipoint support when cluster style is used
 import EsriJSON from 'ol/format/EsriJSON';
 import VectorSource from 'ol/source/Vector';
 import * as loadingstrategy from 'ol/loadingstrategy';
@@ -28,31 +27,30 @@ function createSource({
           '&spatialRel=esriSpatialRelIntersects',
           `&geometry={"xmin":${extent[0]},"ymin":`,
           `${extent[1]},"xmax":${extent[2]},"ymax":${extent[3]}`,
-          `,"spatialReference":{"wkid":${esriSrs}}`,
+          `,"spatialReference":{"wkid":${esriSrs}}}`,
           '&geometryType=esriGeometryEnvelope',
           `&inSR=${esriSrs}&outFields=*`,
           '&returnIdsOnly=false&returnCountOnly=false',
           '&geometryPrecision=2',
           `&outSR=${esriSrs}${queryFilter}`].join(''));
-      // SKA for multipoint support when cluster style is used
-      fetch(url)
-        .then(response => response.json())
-        .then((data) => {
-          const features = esrijsonFormat.readFeatures(data, {
-            featureProjection: projection
+      fetch(url).then(response => response.json()).then((data) => {
+        // SKA fix for missing featureID that solve issue with multiple features when zooming
+        const pkfield = data.fields.find(field => field.type === 'esriFieldTypeOID')?.name || null;
+        const features = esrijsonFormat.readFeatures(data, {
+          featureProjection: projection
+        });
+        if (features.length > 0) {
+          // SKA fix for missing featureID that solve issue with multiple features when zooming
+          features.forEach(feature => {
+            if (pkfield) {
+              const featureId = feature.get(pkfield);
+              feature.setId(featureId);
+            }
           });
-          if (features.length > 0) {
-            features.forEach(feature => {
-              if (feature.getGeometry().getType() === 'MultiPoint') {
-                const coordinates = feature.getGeometry().getCoordinates();
-                const pointGeometry = new Point(coordinates[0]);
-                feature.setGeometry(pointGeometry);
-              }
-              that.addFeature(feature);
-            });
-          }
-        }).catch(error => console.warn(error));
-    // SKA for multipoint support when cluster style is used
+          that.addFeatures(features);
+        }
+        success(features);
+      }).catch(error => console.warn(error));
     },
     strategy: loadingstrategy.bbox
   });
