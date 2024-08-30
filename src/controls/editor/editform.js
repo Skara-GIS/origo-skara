@@ -8,6 +8,7 @@ const createForm = function createForm(obj) {
   const type = obj.type;
   const maxLength = obj.maxLength ? ` maxlength="${obj.maxLength}"` : '';
   const dropdownOptions = obj.options || [];
+  const multicheckboxOptions = obj.options || []; // SKA multicheckbox options
   const today = new Date();
   const isoDate = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString();
   const elDiv = document.createElement('div');
@@ -31,8 +32,31 @@ const createForm = function createForm(obj) {
       el = `<div class="validate ${cls}"><label>${label}<br><textarea name="textarea${maxLengthText}" id="${id}" rows="3" ${maxLength}${readonly}${required}>${val}</textarea></label></div>`;
       break;
     case 'checkbox':
-      checked = (obj.config && obj.config.uncheckedValue ? obj.config.uncheckedValue !== val : val) ? ' checked' : '';
-      el = `<div class="o-form-checkbox ${cls}"><label for="${id}"><input type="checkbox" id="${id}" value="${val}"${checked}${disabled}/>${label}</label></div>`;
+      // SKA multicheckbox
+      if (multicheckboxOptions.length) {
+        el = `<div class="o-form-checkbox"><label>${label}</label><br>`;
+        multicheckboxOptions.forEach((opt, index) => {
+          const option = opt.split(':')[0];
+          const subtype = opt.split(':')[1];
+          let textboxVal;
+          // SKA subtype textbox need some more work
+          if (subtype === 'textbox') {
+            checked = val[val.length - 1] && multicheckboxOptions.indexOf(val[val.length - 1]) === -1 ? ' checked' : '';
+            textboxVal = checked ? val[val.length - 1] : '';
+            el += `<input id="${id}-${index}" type="checkbox" name="${name}" data-index="${index}" value="${option}"${checked}> ${option}: `;
+            el += `<input type="text" value="${textboxVal}"${maxLength} style="width: auto; padding:0; margin:0; line-height:1.3rem;" autocomplete="off">`;
+            el += '<br>';
+          } else {
+            checked = val.indexOf(option) > -1 ? ' checked' : '';
+            el += `<input id="${id}-${index}" type="checkbox" name="${name}" data-index="${index}" value="${option}"${checked}> ${option}<br>`;
+          }
+        });
+        el += '<br></div>';
+        // SKA multicheckbox ends here, standard single checkbox follows
+      } else {
+        checked = (obj.config && obj.config.uncheckedValue ? obj.config.uncheckedValue !== val : val) ? ' checked' : '';
+        el = `<div class="o-form-checkbox ${cls}"><label for="${id}"><input type="checkbox" id="${id}" value="${val}"${checked}${disabled}/>${label}</label></div>`;
+      }
       break;
     case 'dropdown':
       if (val) {

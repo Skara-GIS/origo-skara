@@ -894,11 +894,14 @@ function onAttributesSave(features, attrs) {
       // Get the input attributes
       // FIXME: Don't have to get from DOM, the same values are in 'attribute'
       // and it would be enough to call getElementId once anyway (called numerous times later on).
-      const inputType = document.getElementById(attribute.elId).getAttribute('type');
-      const inputValue = document.getElementById(attribute.elId).value;
-      const inputName = document.getElementById(attribute.elId).getAttribute('name');
-      const inputId = document.getElementById(attribute.elId).getAttribute('id');
-      const inputRequired = document.getElementById(attribute.elId).required;
+      // SKA multicheckbox, some default values added, should be fixed in a better way later on.
+      const multicheckboxValues = [];
+      const inputElement = document.getElementById(attribute.elId);
+      const inputType = inputElement ? inputElement.getAttribute('type') : 'checkbox';
+      const inputValue = inputElement ? inputElement.value : 'Empty';
+      const inputName = inputElement ? inputElement.getAttribute('name') : 'Empty';
+      const inputId = inputElement ? inputElement.getAttribute('id') : 'Empty';
+      const inputRequired = inputElement ? inputElement.required : 'Empty';
 
       // If hidden element it should be excluded
       // By sheer luck, this prevents attributes to be changed in batch edit mode when checkbox is not checked.
@@ -906,9 +909,27 @@ function onAttributesSave(features, attrs) {
       if (!document.querySelector(containerClass) || document.querySelector(containerClass).classList.contains('o-hidden') === false) {
         // Check if checkbox. If checkbox read state.
         if (inputType === 'checkbox') {
-          const checkedValue = (attribute.config && attribute.config.checkedValue) || 1;
-          const uncheckedValue = (attribute.config && attribute.config.uncheckedValue) || 0;
-          editEl[attribute.name] = document.getElementById(attribute.elId).checked ? checkedValue : uncheckedValue;
+        // SKA Check if checkbox contains options then handle as multicheckbox, textbox option need some more work
+          if (attribute.options && attribute.options.length > 0) {
+            const checkboxes = document.querySelectorAll(`input[name="${attribute.name}"]:checked`);
+            checkboxes.forEach((checkbox) => {
+              if (checkbox.nextElementSibling && checkbox.nextElementSibling.type === 'text') {
+                if (checkbox.nextElementSibling.value) {
+                  multicheckboxValues.push(checkbox.nextElementSibling.value.trim());
+                }
+              } else {
+                multicheckboxValues.push(checkbox.value);
+              }
+            });
+            editEl[attribute.name] = multicheckboxValues.join('; ');
+            const delimiterValue = attribute.delimiter || '; ';
+            editEl[attribute.name] = multicheckboxValues.join(delimiterValue);
+          } else {
+          // SKA standard single checkbox
+            const checkedValue = (attribute.config && attribute.config.checkedValue) || 1;
+            const uncheckedValue = (attribute.config && attribute.config.uncheckedValue) || 0;
+            editEl[attribute.name] = document.getElementById(attribute.elId).checked ? checkedValue : uncheckedValue;
+          }
         } else if (attribute.type === 'searchList') {
           // SearchList may have its value in another place than the input element itself. Query the "Component" instead.
           // Note that inputValue still contains the value of the input element, which is  used to validate required.
