@@ -137,8 +137,6 @@ const Help = function Help(options = {}) {
       let textEl = el.text || defaultOptions[el.name].text;
       const iconEl = el.icon || defaultOptions[el.name].icon;
       const urlEl = el.url || defaultOptions[el.name].url;
-      console.log('Current element:', el);
-      console.log('Element URL:', el.url);
       const iconStyle = el.iconStyle || '';
       const controlIcons = Icon({
         icon: iconEl,
