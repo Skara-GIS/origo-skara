@@ -19,6 +19,7 @@ const Measure = function Measure({
   elevationServiceURL,
   elevationTargetProjection,
   elevationAttribute,
+  elevationDecimals = 1, // SKA options for elevation decimals
   showSegmentLengths = false,
   showSegmentLabelButtonActive = true,
   useHectare = true,
@@ -203,7 +204,7 @@ const Measure = function Measure({
       cache: false
     })).then((data) => {
       const elevation = getElevationAttribute(elevationAttribute, data);
-      feature.getStyle().getText().setText(`${elevation.toFixed(1)} m`);
+      feature.getStyle().getText().setText(`${elevation.toFixed(elevationDecimals)} m`);
       source.changed();
     });
   }
