@@ -5,6 +5,7 @@ import replacer from '../../utils/replacer';
 const externalurlSeveralButtons = function externalurlSeveralButtons(options = {}) {
   const mainbuttonTooltipText = options.tooltipText || 'Visa kartan i en extern karttjänst';
   const links = options.links;
+  const hasValidMethod = links.some(link => link.method !== 'none');
   const clsSettings = options.cls || 'flex column'; // SKA options for specific CLS
   const tooltipPlacementSettings = options.tooltipPlacement || 'east'; // SKA options for specific tooltipPlacement
   let map;
@@ -15,11 +16,34 @@ const externalurlSeveralButtons = function externalurlSeveralButtons(options = {
   let target;
   const buttons = [];
   const subButtons = [];
+  const direction = options.direction;
+  const linkTarget = options.target || '_blank';
+  let containerElementcls;
+  let subButtoncls;
+  let subButtontooltipPlacement;
+  switch (direction) {
+    case 'horizontal':
+    {
+      containerElementcls = 'flex row';
+      subButtoncls = 'margin-left-small';
+      subButtontooltipPlacement = 'south';
+      break;
+    }
+    default:
+    {
+      containerElementcls = 'flex column';
+      subButtoncls = 'margin-top-small';
+      subButtontooltipPlacement = 'east';
+      break;
+    }
+  }
 
   function toggleMainButton() {
     if (!isMainButtonActive) {
       document.getElementById(externalUrlMainButton.getId()).classList.add('active');
-      viewer.centerMarker.show();
+      if (hasValidMethod) {
+        viewer.centerMarker.show();
+      }
       subButtons.forEach((button) => {
         document.getElementById(button.getId()).classList.remove('hidden');
       });
@@ -27,7 +51,9 @@ const externalurlSeveralButtons = function externalurlSeveralButtons(options = {
       isMainButtonActive = true;
     } else {
       document.getElementById(externalUrlMainButton.getId()).classList.remove('active');
-      viewer.centerMarker.hide();
+      if (hasValidMethod) {
+        viewer.centerMarker.hide();
+      }
       subButtons.forEach((button) => {
         document.getElementById(button.getId()).classList.add('hidden');
       });
@@ -41,11 +67,12 @@ const externalurlSeveralButtons = function externalurlSeveralButtons(options = {
     onInit() {
       containerElement = El({
         tagName: 'div',
+        cls: containerElementcls
         cls: `${clsSettings}` // SKA options for specific CLS
       });
 
       externalUrlMainButton = Button({
-        cls: 'o-measure padding-small margin-bottom-smaller icon-smaller round light box-shadow',
+        cls: 'o-measure padding-small icon-smaller round light box-shadow',
         icon: '#ic_baseline_link_24px',
         tooltipText: mainbuttonTooltipText,
         tooltipPlacement: 'east',
@@ -58,9 +85,10 @@ const externalurlSeveralButtons = function externalurlSeveralButtons(options = {
         const tooltipText = link.tooltipText;
         const buttonImage = link.buttonImage || '#fa-external-link';
         const subButton = Button({
-          cls: 'o-measure-length padding-small margin-bottom-smaller icon-smaller round light box-shadow hidden',
+          cls: `o-measure-length padding-small ${subButtoncls} icon-smaller round light box-shadow hidden`,
           icon: buttonImage,
           tooltipText,
+          tooltipPlacement: subButtontooltipPlacement,
           tooltipPlacement: `${tooltipPlacementSettings}`, // SKA options for specific tooltipPlacement
           click() {
             const mapView = map.getView();
@@ -74,8 +102,10 @@ const externalurlSeveralButtons = function externalurlSeveralButtons(options = {
             } else if (link.method === 'LatLon') {
               const centerLonlat = toLonLat(transformedCenter);
               replacedUrl = replacer.replace(link.url, { LON: centerLonlat[0], LAT: centerLonlat[1] });
+            } else if (link.method === 'none') {
+              replacedUrl = link.url;
             }
-            window.open(replacedUrl, '_blank');
+            window.open(replacedUrl, linkTarget);
           }
         });
         buttons.push(subButton);
