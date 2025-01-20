@@ -27,7 +27,6 @@ const createForm = function createForm(obj) {
   const type = obj.type;
   const maxLength = obj.maxLength ? ` maxlength="${obj.maxLength}"` : '';
   const dropdownOptions = obj.options || [];
-  const multicheckboxOptions = obj.options || []; // SKA multicheckbox options
   const today = new Date();
   const isoDate = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString();
   const elDiv = document.createElement('div');

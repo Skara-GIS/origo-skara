@@ -6,8 +6,6 @@ const externalurlSeveralButtons = function externalurlSeveralButtons(options = {
   const mainbuttonTooltipText = options.tooltipText || 'Visa kartan i en extern karttjänst';
   const links = options.links;
   const hasValidMethod = links.some(link => link.method !== 'none');
-  const clsSettings = options.cls || 'flex column'; // SKA options for specific CLS
-  const tooltipPlacementSettings = options.tooltipPlacement || 'east'; // SKA options for specific tooltipPlacement
   let map;
   let isMainButtonActive = false;
   let viewer;
@@ -68,7 +66,6 @@ const externalurlSeveralButtons = function externalurlSeveralButtons(options = {
       containerElement = El({
         tagName: 'div',
         cls: containerElementcls
-        cls: `${clsSettings}` // SKA options for specific CLS
       });
 
       externalUrlMainButton = Button({
@@ -89,7 +86,6 @@ const externalurlSeveralButtons = function externalurlSeveralButtons(options = {
           icon: buttonImage,
           tooltipText,
           tooltipPlacement: subButtontooltipPlacement,
-          tooltipPlacement: `${tooltipPlacementSettings}`, // SKA options for specific tooltipPlacement
           click() {
             const mapView = map.getView();
             const center = mapView.getCenter();
