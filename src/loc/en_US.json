@@ -111,6 +111,16 @@
             "close": "Close",
             "bookmarkLabel": "Bookmark for"
         },
+        "externalurl": {
+            "tooltipText": "Display the map in an external map service",
+            "noUrl": "No URL is specified in the configuration",
+            "linkTooltipText": "Open link"
+        },
+        "draganddrop": {
+            "addFromFile": "Add from file",
+            "yourLayersName": "your-layers",
+            "yourLayersTitle": "Your layers"
+        },
         "legend": {
             "placeholderText": "Search for layer",
             "turnOffLayersTitle": "Turn off all layers",
