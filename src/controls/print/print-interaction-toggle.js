@@ -16,8 +16,10 @@ export default function PrintInteractionToggle(options = {}) {
   const interactions = mapInteractions({ target, mapInteractions: pageSettings && pageSettings.mapInteractions ? pageSettings.mapInteractions : {} });
   let mapInteractionToggleButton;
 
-  const toggleState = function toggleState() {
-    if (mapInteractionToggleButton.getState() === 'initial') {
+  const toggleState = function toggleState(newState) { // SKA siteplan-plugin
+    if (newState) { // SKA siteplan-plugin
+      mapInteractionToggleButton.dispatch('change', { state: newState }); // SKA siteplan-plugin
+    } else if (mapInteractionToggleButton.getState() === 'initial') { // SKA siteplan-plugin
       mapInteractionToggleButton.dispatch('change', { state: 'active' });
     } else {
       mapInteractionToggleButton.dispatch('change', { state: 'initial' });
@@ -71,6 +73,7 @@ export default function PrintInteractionToggle(options = {}) {
       }
       return mapInteractionToggleButton.render();
     },
-    restoreInteractions
+    restoreInteractions,
+    toggleState // SKA siteplan-plugin
   });
 }

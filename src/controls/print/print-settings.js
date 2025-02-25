@@ -27,14 +27,16 @@ const PrintSettings = function PrintSettings(options = {}) {
     titleSizes,
     titleSize,
     titleFormatIsVisible,
+    titleIsVisible, // SKA siteplan-plugin
     description,
     descriptionPlaceholderText,
     descriptionAlignment,
     descriptionSizes,
     descriptionSize,
     descriptionFormatIsVisible,
+    descriptionIsVisible, // SKA siteplan-plugin
     sizes,
-    size,
+    // size // SKA siteplan-plugin
     sizeCustomMinHeight,
     sizeCustomMaxHeight,
     sizeCustomMinWidth,
@@ -55,6 +57,10 @@ const PrintSettings = function PrintSettings(options = {}) {
     localize
   } = options;
 
+  let {
+    size
+  } = options;
+
   let headerComponent;
   let contentComponent;
   let openButton;
@@ -65,6 +71,7 @@ const PrintSettings = function PrintSettings(options = {}) {
   let printLegendControl;
   let rotationControl;
   let setScaleControl;
+  let sizeControl;
 
   // Set tabindex for all settings buttons to include or exclude in taborder depending on if expanded or not
   const setTabIndex = function setTabIndex() {
@@ -110,8 +117,14 @@ const PrintSettings = function PrintSettings(options = {}) {
     document.getElementById(openButton.getId()).dispatchEvent(customEvt);
   };
 
+  // SKA siteplan-plugin
+  const updateSize = function updateSize(newSize) {
+    size = newSize;
+  };
+
   return Component({
     close,
+    updateSize, // SKA siteplan-plugin
     getScaleControl() { return setScaleControl; },
     onInit() {
       openButton = Button({
@@ -142,7 +155,7 @@ const PrintSettings = function PrintSettings(options = {}) {
       });
 
       const orientationControl = OrientationControl({ orientation, localize });
-      const sizeControl = SizeControl({
+      sizeControl = SizeControl({ // SKA siteplan-plugin
         initialSize: size,
         sizes: Object.keys(sizes),
         localize
@@ -154,6 +167,7 @@ const PrintSettings = function PrintSettings(options = {}) {
         titleSizes,
         titleSize,
         titleFormatIsVisible,
+        titleIsVisible, // SKA siteplan-plugin
         localize
       });
       const descriptionControl = DescriptionControl({
@@ -163,6 +177,7 @@ const PrintSettings = function PrintSettings(options = {}) {
         descriptionSizes,
         descriptionSize,
         descriptionFormatIsVisible,
+        descriptionIsVisible, // SKA siteplan-plugin
         localize
       });
       const marginControl = MarginControl({ checked: showMargins });
@@ -257,6 +272,9 @@ const PrintSettings = function PrintSettings(options = {}) {
       if (rotationControl) { rotationControl.setRotation(); }
       this.dispatch('render');
       setTabIndex();
+      // SKA siteplan-plugin two rows under
+      const currSizeButton = sizeControl.getComponents().find((control) => control.data.size === size);
+      sizeControl.toggleHandler({ target: document.getElementById(currSizeButton.getId()) });
     },
     render() {
       return printSettingsContainer.render();

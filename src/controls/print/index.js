@@ -23,12 +23,15 @@ const Print = function Print(options = {}) {
     headerSizes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
     headerSize = 'h4',
     headerFormatIsVisible = false,
+    headerIsVisible = true, // SKA siteplan-plugin
+    hideSettings = false, // SKA siteplan-plugin
     descriptionText = '',
     descriptionPlaceholderText = localize('descriptionPlaceholderText'),
     descriptionAlignment = 'center',
     descriptionSizes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
     descriptionSize = 'h4',
     descriptionFormatIsVisible = false,
+    descriptionIsVisible = true, // SKA siteplan-plugin
     sizes = {
       a3: [420, 297],
       a4: [297, 210],
@@ -50,8 +53,11 @@ const Print = function Print(options = {}) {
     scaleInitial,
     showMargins = true,
     showCreated = false,
+    showPrintFormat = false, // SKA siteplan-plugin
+    printFormatPrefix = 'Print format: ', // SKA siteplan-plugin
     createdPrefix = '',
     showScale = true,
+    scaleLineText = true, // SKA siteplan-plugin
     rotation = 0,
     rotationStep = 1,
     leftFooterText = '',
@@ -79,6 +85,15 @@ const Print = function Print(options = {}) {
   return Component({
     name: 'print',
     getPrintComponent,
+    getPrintOptions() { // SKA siteplan-plugin begin
+      return options;
+    },
+    getPrintResolution() {
+      return printComponent.getResolution();
+    },
+    renderPrintComponent(settings) {
+      printComponent.render(settings);
+    }, // SKA siteplan-plugin end
     onInit() {
       if ('visible' in northArrow) {
         showNorthArrow = northArrow.visible;
@@ -103,12 +118,14 @@ const Print = function Print(options = {}) {
         titleSizes: headerSizes,
         titleSize: headerSize,
         titleFormatIsVisible: headerFormatIsVisible,
+        titleIsVisible: headerIsVisible, // SKA siteplan-plugin
         description: descriptionText,
         descriptionPlaceholderText,
         descriptionAlignment,
         descriptionSizes,
         descriptionSize,
         descriptionFormatIsVisible,
+        descriptionIsVisible, // SKA siteplan-plugin
         sizes,
         size: sizeInitial,
         sizeCustomMinHeight,
@@ -122,9 +139,12 @@ const Print = function Print(options = {}) {
         scaleInitial,
         showMargins,
         showCreated,
+        showPrintFormat, // SKA siteplan-plugin
+        printFormatPrefix, // SKA siteplan-plugin
         createdPrefix,
         settingsExpanded,
         showScale,
+        scaleLineText, // SKA siteplan-plugin
         showNorthArrow,
         showPrintLegend,
         rotation,
@@ -133,6 +153,7 @@ const Print = function Print(options = {}) {
         mapInteractionsActive,
         supressResolutionsRecalculation,
         suppressNewDPIMethod,
+        hideSettings, // SKA siteplan-plugin
         localize,
         localeId: localization.getCurrentLocaleId()
       });

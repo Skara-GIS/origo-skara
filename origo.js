@@ -30,6 +30,8 @@ import permalink from './src/permalink/permalink';
 import * as Loader from './src/loading';
 import Spinner from './src/utils/spinner';
 import layerType from './src/layer/layertype';
+import isOnIos from './src/utils/browser'; // SKA siteplan-plugin
+import { showLoading, hideLoading } from './src/loading'; // SKA siteplan-plugin
 
 const Origo = function Origo(configPath, options = {}) {
   /** Reference to the returned Component */
@@ -53,7 +55,7 @@ const Origo = function Origo(configPath, options = {}) {
     defaultControls: [
       { name: 'localization' },
       { name: 'scaleline' },
-      { name: 'zoom' },
+      // { name: 'zoom' },
       { name: 'rotate' },
       { name: 'attribution' },
       { name: 'fullscreen' }
@@ -185,8 +187,8 @@ Origo.ol.Feature = olFeature;
 Origo.ol.Collection = olCollection;
 Origo.ol.Overlay = olOverlay;
 Origo.ol.format = olFormat;
+// Origo.dropdown = dropdown; // SKA siteplan-plugin
 Origo.Utils = Utils;
-Origo.dropdown = dropdown;
 Origo.renderSvgIcon = renderSvgIcon;
 Origo.SelectedItem = SelectedItem;
 Origo.Loader = {};
@@ -195,5 +197,8 @@ Origo.Loader.hide = Loader.hideLoading;
 Origo.Loader.withLoading = Loader.withLoading;
 Origo.Loader.getInlineSpinner = Spinner;
 Origo.layerType = layerType;
+Origo.showLoading = showLoading;
+Origo.hideLoading = hideLoading;
+Origo.isOnIos = isOnIos;
 
 export default Origo;

@@ -26,7 +26,7 @@ const PrintComponent = function PrintComponent(options = {}) {
     logo,
     northArrow,
     printLegend,
-    filename = 'origo-map',
+    // filename = 'origo-map', // SKA siteplan-plugin
     map,
     target,
     viewer,
@@ -34,10 +34,12 @@ const PrintComponent = function PrintComponent(options = {}) {
     titleAlignment,
     titleSizes,
     titleFormatIsVisible,
+    titleIsVisible, // SKA siteplan-plugin
     descriptionPlaceholderText,
     descriptionAlignment,
     descriptionSizes,
     descriptionFormatIsVisible,
+    descriptionIsVisible, // SKA siteplan-plugin
     sizes,
     sizeCustomMinHeight,
     sizeCustomMaxHeight,
@@ -48,19 +50,25 @@ const PrintComponent = function PrintComponent(options = {}) {
     rotation,
     rotationStep,
     leftFooterText,
-    mapInteractionsActive,
+    // mapInteractionsActive, // SKA siteplan-plugin
     supressResolutionsRecalculation,
     suppressNewDPIMethod,
+    hideSettings, // SKA siteplan-plugin
+    showPrintFormat, // SKA siteplan-plugin
+    printFormatPrefix, // SKA siteplan-plugin
+    scaleLineText, // SKA siteplan-plugin
     settingsExpanded,
     localize,
     localeId
   } = options;
 
   let {
+    filename = 'origo-map', // SKA siteplan-plugin
     title,
     titleSize,
     description,
     descriptionSize,
+    mapInteractionsActive, // SKA siteplan-plugin
     size,
     orientation,
     resolution,
@@ -231,6 +239,10 @@ const PrintComponent = function PrintComponent(options = {}) {
     return showCreated ? `${createdPrefix}${today.toLocaleDateString(localeId)} ${today.toLocaleTimeString(localeId)}` : '';
   };
 
+  const printFormat = function printFormat() {
+    return showPrintFormat ? `${printFormatPrefix}${size.toUpperCase()}<br>` : '';
+  };
+
   const titleComponent = Component({
     update() { dom.replace(document.getElementById(this.getId()), this.render()); },
     render() { return `<div id="${this.getId()}" class="o-print-header ${titleSize} ${titleAlign} empty">${title}</div>`; }
@@ -241,19 +253,22 @@ const PrintComponent = function PrintComponent(options = {}) {
   });
   const createdComponent = Component({
     update() { dom.replace(document.getElementById(this.getId()), this.render()); },
-    render() { return `<div id="${this.getId()}" class="o-print-created text-align-right no-shrink">${created()}</div>`; }
+    // render() { return `<div id="${this.getId()}" class="o-print-created text-align-right no-shrink">${created()}</div>`; } // SKA siteplan-plugin original
+    render() { return `<div id="${this.getId()}" class="o-print-created text-align-right no-shrink">${printFormat()}${created()}</div>`; } // SKA siteplan-plugin
   });
   const footerComponent = Component({
     update() { dom.replace(document.getElementById(this.getId()), this.render()); },
     render() {
-      return `<div id="${this.getId()}" class="o-print-footer flex row justify-space-between padding-left padding-right text-grey-dark text-smaller empty">
+      // return `<div id="${this.getId()}" class="o-print-footer flex row justify-space-between padding-left padding-right text-grey-dark text-smaller empty"> // SKA siteplan-plugin original
+      return `<div id="${this.getId()}" class="o-print-footer flex row justify-space-between text-grey-dark text-smaller empty"> 
         <div class="o-print-footer-left text-align-left">${leftFooterText}</div>
         ${createdComponent.render()}
       </div>`;
     }
   });
 
-  const printMapComponent = PrintMap({ logo, northArrow, map, viewer, showNorthArrow, printLegend, showPrintLegend });
+  // const printMapComponent = PrintMap({ logo, northArrow, map, viewer, showNorthArrow, printLegend, showPrintLegend }); // SKA siteplan-plugin
+  const printMapComponent = PrintMap({ logo, northArrow, map, viewer, showNorthArrow, printLegend, showPrintLegend, scaleLineText }); // SKA siteplan-plugin
 
   const centerComponent = El({ cls: 'flex column align-start absolute center-center transparent z-index-ontop-middle' });
   const printMapSpinner = El({ cls: 'print-map-loading-spinner' });
@@ -311,12 +326,14 @@ const PrintComponent = function PrintComponent(options = {}) {
     titleSizes,
     titleSize,
     titleFormatIsVisible,
+    titleIsVisible, // SKA siteplan-plugin
     description,
     descriptionPlaceholderText,
     descriptionAlignment,
     descriptionSizes,
     descriptionSize,
     descriptionFormatIsVisible,
+    descriptionIsVisible, // SKA siteplan-plugin
     sizes,
     size,
     sizeCustomMinHeight,
@@ -376,6 +393,7 @@ const PrintComponent = function PrintComponent(options = {}) {
 
   return Component({
     name: 'printComponent',
+    getPrintPadding,
     getResolution() {
       return resolution;
     },
@@ -428,6 +446,7 @@ const PrintComponent = function PrintComponent(options = {}) {
     },
     changeSize(evt) {
       size = evt.size;
+      footerComponent.update(); // SKA siteplan-plugin
       if (deviceOnIos) {
         setMaxRes();
       }
@@ -604,7 +623,18 @@ const PrintComponent = function PrintComponent(options = {}) {
         heightImage
       }));
     },
-    async onRender() {
+    // SKA siteplan-plugin
+    async onRender(settings) {
+      orientation = settings.orientation || orientation;
+      size = settings.size || size;
+      printSettings.updateSize(size);
+      title = settings.title || title;
+      filename = settings.filename || filename;
+      mapInteractionsActive = settings.mapInteractionsActive === undefined ? mapInteractionsActive : settings.mapInteractionsActive;
+      if (printInteractionToggle) {
+        const state = mapInteractionsActive ? 'active' : 'initial';
+        printInteractionToggle.toggleState(state);
+      }
       function addMapLoadListeners() {
         const startEvRef = map.on('loadstart', disablePrintToolbar);
         const endEvRef = map.on('loadend', enablePrintToolbar);
@@ -646,6 +676,7 @@ const PrintComponent = function PrintComponent(options = {}) {
         updateResolutions();
       }
       printMapComponent.dispatch('change:toggleScale', { showScale });
+      footerComponent.update(); // SKA siteplan-plugin
       this.updatePageSize();
     },
     updateMapSize() {
@@ -682,7 +713,9 @@ const PrintComponent = function PrintComponent(options = {}) {
       const draganddropControl = viewer.getControlByName('draganddrop');
       if (draganddropControl) draganddropControl.addInteraction();
     },
-    render() {
+    // SKA siteplan-plugin
+    render(settings) {
+      const hidden = hideSettings ? 'hidden' : ''; 
       viewer.dispatch('toggleClickInteraction', {
         name: 'featureinfo',
         active: true
@@ -711,7 +744,7 @@ const PrintComponent = function PrintComponent(options = {}) {
           </div>
         </div>
         ${centerComponent.render()}
-        <div id="o-print-tools-left" class="top-left fixed no-print flex column spacing-vertical-small z-index-ontop-top height-full">
+        <div id="o-print-tools-left" class="top-left fixed no-print flex column spacing-vertical-small z-index-ontop-top height-full ${hidden}">
           ${printSettings.render()}
           ${printInteractionToggle.render()}
         </div>
@@ -721,7 +754,7 @@ const PrintComponent = function PrintComponent(options = {}) {
       `;
 
       targetElement.appendChild(dom.html(htmlString));
-      this.dispatch('render');
+      this.dispatch('render', settings); // SKA siteplan-plugin and hidden added some rows up
     }
   });
 };

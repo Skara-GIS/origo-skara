@@ -6,6 +6,7 @@ export default function TitleControl(options = {}) {
     titlePlaceholderText,
     titleAlignment,
     titleSizes,
+    titleIsVisible, // SKA siteplan-plugin
     localize
   } = options;
 
@@ -117,8 +118,10 @@ export default function TitleControl(options = {}) {
     onChangeTitle(evt) {
       this.dispatch('change:title', evt);
     },
+    // SKA siteplan-plugin first row after return and last rows
     render() {
       return `
+      <div class="${titleIsVisible ? '' : 'hidden'}">
       <div class="padding-top-large"></div>
       <h6>${localize('titleTitle')}</h6>
       <div class="padding-smaller o-tooltip active">
@@ -139,6 +142,8 @@ export default function TitleControl(options = {}) {
           ${selectSize.render()}
         </div>
         <hr class="divider horizontal"/>
+      </div>
+         <div class="padding-top"></div>
       </div>
       `;
     }

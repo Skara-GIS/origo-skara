@@ -14,12 +14,12 @@ export default function printTemplate({
   showScaleControl,
   printLegendControl,
   localize
-}) {
+}) { // SKA siteplan-plugin two rows under <div id="${id}" class="flex column no-print padding-x overflow-auto max-height-100"> and <h6>Storlek</h6>
   return `
-  <div id="${id}" class="flex column no-print padding-x overflow-auto max-height-100">
+  <div id="${id}" class="flex column no-print padding-x overflow-auto max-height-100" style="min-width:260px;">
     ${titleControl.render()}
-    <div class="padding-top"></div>
     ${descriptionControl.render()}
+    <h6>Storlek</h6>
     <div class="padding-top"></div>
     <h6>${localize('paperSize')}</h6>
     ${sizeControl.render()}

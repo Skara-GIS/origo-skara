@@ -32,10 +32,11 @@ const ToggleGroup = function ToggleGroup(options = {}) {
         oldActive.dispatch('change', { state: 'initial' });
       }
     }
-    evt.preventDefault();
+    if (evt instanceof Event) { evt.preventDefault(); } // SKA siteplan-plugin
   }
 
   return Component({
+    toggleHandler,
     onInit() {
       this.addComponents(components);
     },

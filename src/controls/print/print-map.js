@@ -11,7 +11,8 @@ export default function PrintMap(options = {}) {
     northArrow,
     printLegend,
     map,
-    viewer
+    viewer,
+    scaleLineText // SKA siteplan-plugin
   } = options;
   let {
     showNorthArrow,
@@ -70,7 +71,7 @@ export default function PrintMap(options = {}) {
       scaleLine = new olScaleLine({
         target: bottomRightMapControls.getId(),
         bar: true,
-        text: true,
+        text: scaleLineText, // SKA siteplan-plugin before: text: true,
         steps: 2
       });
       const attribution = new olAttribution({

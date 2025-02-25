@@ -17,6 +17,7 @@ export default function SizeControl({ initialSize, sizes, localize }) {
       cls: 'grow light text-smaller',
       text: titleCase(size),
       state: initialSize === size ? 'active' : 'initial',
+      data: { size }, // SKA siteplan-plugin
       style: { width: `${String(round2(100 / sizes.length, 1))}%` },
       ariaLabel: titleCase(size)
     });

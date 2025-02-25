@@ -11,7 +11,8 @@ export default function DescriptionControl(options = {}) {
 
   let {
     descriptionSize,
-    descriptionFormatIsVisible
+    descriptionFormatIsVisible,
+    descriptionIsVisible // SKA siteplan-plugin
   } = options;
 
   const cls = 'placeholder-text-smaller smaller';
@@ -117,9 +118,10 @@ export default function DescriptionControl(options = {}) {
     },
     onChangeDescription(evt) {
       this.dispatch('change:description', evt);
-    },
+    }, // SKA siteplan-plugin in return added three lines
     render() {
       return `
+      <div class="${descriptionIsVisible ? '' : 'hidden'}">
       <div class="padding-top-large"></div>
       <h6>${localize('description')}</h6>
       <div class="padding-smaller o-tooltip active">
@@ -140,6 +142,8 @@ export default function DescriptionControl(options = {}) {
         ${selectSize.render()}
       </div>
       <hr class="divider horizontal"/>
+      </div>
+        <div class="padding-top"></div>
       </div>
       `;
     }

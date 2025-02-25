@@ -60,6 +60,8 @@ const MapInteractions = function MapInteractions(options = {}) {
         }
       })
     ]);
+  } else if (options.mapInteractions) { // SKA siteplan-plugin
+    return defaults(options.mapInteractions); // SKA siteplan-plugin
   }
   return defaults();
 };
