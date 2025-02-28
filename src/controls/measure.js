@@ -25,6 +25,7 @@ const Measure = function Measure({
   useHectare = true,
   snap = false,
   snapIsActive = true,
+  queryable = false,
   snapLayers,
   snapRadius = 15,
   highlightColor,
@@ -109,8 +110,8 @@ const Measure = function Measure({
     }
     if (
       tip
-    && geomType === 'Point'
-    && !modify.getOverlay().getSource().getFeatures().length
+      && geomType === 'Point'
+      && !modify.getOverlay().getSource().getFeatures().length
     ) {
       tipPoint = geometry;
       tipStyle.getText().setText(tip);
@@ -118,14 +119,26 @@ const Measure = function Measure({
     }
     return styles;
   }
+  const locLength = localize('lengthTooltip');
+  const locArea = localize('areaTooltip');
+  const locTitle = localize('layerTitle');
 
   const vector = new VectorLayer({
     group: 'none',
     name: 'measure',
-    title: 'Measure',
+    title: locTitle,
     source,
+    queryable,
     zIndex: 8,
     styleName: 'origoStylefunction',
+    attributes: [
+      { html: `${locLength}: {{@length(1)}}`,
+        localization
+      },
+      { html: `${locArea}: {{@area(1)}}`,
+        localization
+      }
+    ],
     style(feature) {
       return styleFunction(feature, showSegmentLabels);
     }
