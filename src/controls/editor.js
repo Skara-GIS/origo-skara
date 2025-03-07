@@ -15,6 +15,7 @@ const Editor = function Editor(options = {}) {
   let viewer;
   let isVisible = isActive;
   let editorToolbar;
+  let lasteditlayer; // SKA: Added to keep track of the last editable layer
   let toolbarVisible = false;
   /** Keeps track of the last selected item in featureinfo. We need to use our own variable for this
    * in order to determine if editor got activated directly from featureinfo or some other tool has been active between. */
@@ -66,6 +67,24 @@ const Editor = function Editor(options = {}) {
   function editFeatureAttributes(featureId, layerName) {
     editHandler.editAttributesDialog(featureId, layerName);
   }
+
+  // SKA: Turns off the active editing layer and reactivates the last active editing layer
+  const turnOnLastEditableLayer = () => {
+    if (lasteditlayer && typeof lasteditlayer.setVisible === 'function') {
+      lasteditlayer.setVisible(true);
+    }
+  };
+
+  // SKA: Added to be able to turn off editable layers when editor is turned off
+  const turnOffEditableLayers = () => {
+    const layers = viewer.getLayersByProperty('editable', true);
+    layers.forEach((layer) => {
+      if (layer.getVisible()) {
+        lasteditlayer = layer;
+        layer.setVisible(false);
+      }
+    });
+  };
 
   return Component({
     name: 'editor',
@@ -132,6 +151,10 @@ const Editor = function Editor(options = {}) {
       viewer.on('toggleClickInteraction', (detail) => {
         if (detail.name === 'editor' && detail.active) {
           editorButton.dispatch('change', { state: 'active' });
+          turnOnLastEditableLayer(); // SKA: Turns on the last edited layer
+        } else if (detail.name === 'editor') {
+          turnOffEditableLayers();
+          editorButton.dispatch('change', { state: 'initial' });
         } else {
           // Someone else got active. Ditch the last selected item as we don't go directly from featureinfo to edit
           lastSelectedItem = null;
