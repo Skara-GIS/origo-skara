@@ -154,6 +154,9 @@
             "zoomInButtonTooltip": "Zooma in i kartan",
             "zoomOutButtonTooltip": "Zooma ut i kartan"
         },
+        "fullscreen": {
+            "fullscreenButtonTooltip": "Visa stor karta"
+        },
         "home": {
             "zoomHomeButtonTooltip": "Zooma till hela kartan"
         },
@@ -162,6 +165,13 @@
         },
         "about": {
             "title": "Om kartan"
+        },
+        "mapmenu": {
+            "menuButtonTooltip": "Meny",
+            "closeButtonLabel": "Stäng"
+        },
+        "scale": {
+            "scaleText": "Skala 1:"
         },
         "scalepicker": {
             "selectScaleAriaLabel": "Välj skala"
