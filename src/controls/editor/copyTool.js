@@ -70,8 +70,19 @@ const copyTool = function copyTool(viewer, options) {
     if (e.selected.length > 0) {
       const accept = window.confirm('Kopiera vald geometri? Avbryt för att välja en annan');
       if (accept) {
-        const f = new Feature(e.selected[0].getGeometry().clone());
-
+        // SKA option to set allowed attributes that should be copied from selected feature
+        const original = e.selected[0];
+        const f = new Feature(original.getGeometry().clone());
+        if (Array.isArray(options.allowedAttributes) && options.allowedAttributes.length > 0) {
+          const props = original.getProperties();
+          const filteredProps = {};
+          options.allowedAttributes.forEach((key) => {
+            if (props[key] !== undefined) {
+              filteredProps[key] = props[key];
+            }
+          });
+          f.setProperties(filteredProps);
+        }
         cancelTool();
         // Important! Remove handler so it won't linger
         document.removeEventListener('toggleEdit', onToggleEdit, { once: true });
