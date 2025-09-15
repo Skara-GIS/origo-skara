@@ -49,7 +49,7 @@ const PrintComponent = function PrintComponent(options = {}) {
     createdPrefix,
     rotation,
     rotationStep,
-    leftFooterText,
+    // leftFooterText, // SKA siteplan-plugin moved to let so it can be changed
     // mapInteractionsActive, // SKA siteplan-plugin
     supressResolutionsRecalculation,
     suppressNewDPIMethod,
@@ -68,6 +68,7 @@ const PrintComponent = function PrintComponent(options = {}) {
     titleSize,
     description,
     descriptionSize,
+    leftFooterText, // SKA siteplan-plugin
     mapInteractionsActive, // SKA siteplan-plugin
     size,
     orientation,
@@ -623,8 +624,9 @@ const PrintComponent = function PrintComponent(options = {}) {
         heightImage
       }));
     },
-    // SKA siteplan-plugin
+    // SKA siteplan-plugin leftFooterText
     async onRender(settings) {
+      leftFooterText = settings.leftFooterText || leftFooterText;
       orientation = settings.orientation || orientation;
       size = settings.size || size;
       printSettings.updateSize(size);
