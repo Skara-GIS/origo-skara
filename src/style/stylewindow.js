@@ -23,7 +23,8 @@ const Stylewindow = function Stylewindow(optOptions = {}) {
     css = '',
     viewer,
     closeIcon = '#ic_close_24px',
-    palette = ['rgb(181,14,11)', 'rgb(149,85,87)', 'rgb(91,109,72)', 'rgb(8,48,60)', 'rgb(212,190,163)', 'rgb(240,179,50)', 'rgb(234,84,49)', 'rgb(209,182,180)', 'rgb(186,189,171)', 'rgb(142,151,160)', 'rgb(238,229,217)', 'rgb(239,143,118)', 'rgb(140,130,132)', 'rgb(154,116,142)', 'rgb(59,159,106)', 'rgb(44,88,141)', 'rgb(0,0,0)']
+    palette = ['rgb(181,14,11)', 'rgb(149,85,87)', 'rgb(91,109,72)', 'rgb(8,48,60)', 'rgb(212,190,163)', 'rgb(240,179,50)', 'rgb(234,84,49)', 'rgb(209,182,180)', 'rgb(186,189,171)', 'rgb(142,151,160)', 'rgb(238,229,217)', 'rgb(239,143,118)', 'rgb(140,130,132)', 'rgb(154,116,142)', 'rgb(59,159,106)', 'rgb(44,88,141)', 'rgb(0,0,0)'],
+    extraMarkers = []
   } = optOptions;
 
   let annotationField;
@@ -498,7 +499,7 @@ const Stylewindow = function Stylewindow(optOptions = {}) {
         break;
       case 'Point':
       case 'MultiPoint':
-        style[0] = drawStyles.createRegularShape(newStyleObj.pointType, newStyleObj.pointSize, fill, stroke, newStyleObj.objRotation);
+        style[0] = drawStyles.createRegularShape(newStyleObj.pointType, newStyleObj.pointSize, fill, stroke, newStyleObj.objRotation, extraMarkers);
         break;
       case 'TextPoint':
         style[0] = new Style({
@@ -724,7 +725,7 @@ const Stylewindow = function Stylewindow(optOptions = {}) {
 
       contentEl = Element({
         cls: 'o-draw-stylewindow-content overflow-auto',
-        innerHTML: `${styleTemplate({ palette, swStyle, localization })}`
+        innerHTML: `${styleTemplate({ palette, swStyle, localization, extraMarkers })}`
       });
 
       this.addComponent(headerEl);
