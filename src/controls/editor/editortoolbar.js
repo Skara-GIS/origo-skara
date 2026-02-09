@@ -25,12 +25,79 @@ const EditorToolbar = function EditorToolbar(options = {}) {
   let $editDelete;
   let $editLayers;
   let $editSave;
+  let $editSnapTools; // SKA EditorSnap: Element reference for snap/trace tools button
   let layerSelector;
   let drawToolsSelector;
   let modifyToolsBtn;
   let modifyToolsPopoverEl;
+
   let component;
   let selection;
+
+  // SKA EditorSnap: Snap/Trace state machine
+  const SNAP_STATES = ['none', 'snap', 'snaptrace'];
+  let snapStateIndex = 0;
+  // SKA EditorSnap: Update button state based on active tools
+  function updateSnapToolsButtonState({ traceActive, snapActive }) {
+    const active = !!traceActive || !!snapActive;
+    if ($editSnapTools) {
+      if (active) {
+        $editSnapTools.classList.add(activeClass);
+        $editSnapTools.style.opacity = '1';
+      } else {
+        $editSnapTools.classList.remove(activeClass);
+        $editSnapTools.style.opacity = '0.7';
+      }
+    }
+  }
+  /**
+   * SKA EditorSnap: Sets the visual icon and propagates state to the editor (unless emit=false)
+   * state: 'none' | 'snap' | 'snaptrace'
+   */
+  function setSnapToolsState(state, emit = true) {
+    const iconUse = document.getElementById('o-editor-snap-icon');
+    const snapToolsBtn = document.getElementById('o-editor-snaptools');
+    const snapToolsSpan = snapToolsBtn ? snapToolsBtn.querySelector('span') : null;
+    if (!iconUse) return;
+    if (state === 'none') {
+      iconUse.setAttribute('xlink:href', '#fa-magnet');
+      iconUse.style.opacity = '0.4';
+      if (snapToolsSpan) {
+        snapToolsSpan.setAttribute('data-tooltip', 'Snap/Trace - Inaktiv');
+      }
+      updateSnapToolsButtonState({ traceActive: false, snapActive: false });
+      if (emit) {
+        // SKA EditorSnap: Preserve draw state with preserveDraw flag
+        document.dispatchEvent(new CustomEvent('toggleEditorTool', { detail: { tool: 'trace', active: false, preserveDraw: true } }));
+        document.dispatchEvent(new CustomEvent('toggleEditorTool', { detail: { tool: 'snap', active: false, preserveDraw: true } }));
+      }
+    } else if (state === 'snap') {
+      iconUse.setAttribute('xlink:href', '#fa-magnet');
+      iconUse.style.opacity = '1';
+      if (snapToolsSpan) {
+        snapToolsSpan.setAttribute('data-tooltip', 'Snap - Aktivt');
+      }
+      updateSnapToolsButtonState({ traceActive: false, snapActive: true });
+      if (emit) {
+        // SKA EditorSnap: Preserve draw state with preserveDraw flag
+        document.dispatchEvent(new CustomEvent('toggleEditorTool', { detail: { tool: 'trace', active: false, preserveDraw: true } }));
+        document.dispatchEvent(new CustomEvent('toggleEditorTool', { detail: { tool: 'snap', active: true, preserveDraw: true } }));
+      }
+    } else if (state === 'snaptrace') {
+      iconUse.setAttribute('xlink:href', '#fa-draw-polygon-o');
+      iconUse.style.opacity = '1';
+      if (snapToolsSpan) {
+        snapToolsSpan.setAttribute('data-tooltip', 'Snap + Trace - Aktivt');
+      }
+      updateSnapToolsButtonState({ traceActive: true, snapActive: true });
+      if (emit) {
+        // SKA EditorSnap: Preserve draw state with preserveDraw flag
+        document.dispatchEvent(new CustomEvent('toggleEditorTool', { detail: { tool: 'snap', active: true, preserveDraw: true } }));
+        document.dispatchEvent(new CustomEvent('toggleEditorTool', { detail: { tool: 'trace', active: true, preserveDraw: true } }));
+      }
+    }
+    snapStateIndex = SNAP_STATES.indexOf(state);
+  }
 
   /**
    * Renders the toolbar. Injects itself to DOM, so no need for caller to insert it
@@ -43,6 +110,9 @@ const EditorToolbar = function EditorToolbar(options = {}) {
     $editDraw = document.getElementById('o-editor-draw');
     $editDelete = document.getElementById('o-editor-delete');
     $editLayers = document.getElementById('o-editor-layers');
+    // SKA EditorSnap: Get snap tools button element
+    $editSnapTools = document.getElementById('o-editor-snaptools');
+    if ($editSnapTools) $editSnapTools.style.cursor = 'pointer';
     $editSave = document.getElementById('o-editor-save');
     // Hide layers choice button if only 1 layer in editable
     if (editableLayers.length < 2) {
@@ -63,6 +133,17 @@ const EditorToolbar = function EditorToolbar(options = {}) {
     const pop = modifyToolsBtn.parentElement;
     const modifyToolsPopover = El({ target: pop, cls: 'o-popover' });
     modifyToolsPopoverEl = modifyToolsPopover.render();
+    if ($editSnapTools && $editSnapTools.parentElement) {
+      const loc = viewer.getControlByName ? viewer.getControlByName('localization') : null;
+      const toolsLabel = loc ? loc.getStringByKeys({ targetParentKey: 'editor', targetKey: 'toolsLabel' }) : 'Verktyg';
+      if ($editSnapTools) {
+        const span = $editSnapTools.querySelector('span');
+        if (span) span.setAttribute('data-tooltip', toolsLabel);
+        $editSnapTools.setAttribute('aria-label', toolsLabel);
+      }
+      // SKA EditorSnap: Query initial snap/trace state from handler
+      document.dispatchEvent(new CustomEvent('queryEditorToolState'));
+    }
   }
 
   function toggleToolbar(state) {
@@ -102,7 +183,6 @@ const EditorToolbar = function EditorToolbar(options = {}) {
       dispatcher.emitToggleEdit('draw');
       $editDraw.blur();
       e.preventDefault();
-      return false;
     });
     $editAttribute.addEventListener('click', (e) => {
       closeModifyToolsPopover();
@@ -122,6 +202,15 @@ const EditorToolbar = function EditorToolbar(options = {}) {
       $editLayers.blur();
       e.preventDefault();
     });
+    // SKA EditorSnap: Cycle through snap states on click
+    $editSnapTools.addEventListener('click', (e) => {
+      if (modifyToolsPopoverEl) modifyToolsPopoverEl.classList.remove('o-active');
+      const nextIndex = (snapStateIndex + 1) % SNAP_STATES.length;
+      const nextState = SNAP_STATES[nextIndex];
+      setSnapToolsState(nextState, true);
+      e.preventDefault();
+    });
+
     $editSave.addEventListener('click', (e) => {
       closeModifyToolsPopover();
       dispatcher.emitToggleEdit('save');
@@ -166,6 +255,14 @@ const EditorToolbar = function EditorToolbar(options = {}) {
     } else {
       $editDelete.classList.remove('o-hidden');
     }
+    // SKA EditorSnap: Sync simple tools state (snap) and ask handler for trace state
+    const snapEl = document.getElementById('o-editor-tools-snap');
+    if (snapEl) {
+      snapEl.checked = !!layer.get('snap');
+    }
+    // SKA EditorSnap: Ask editor handler what the current trace state is
+    document.dispatchEvent(new CustomEvent('queryEditorToolState'));
+
     // Set allowed modifyTools depending on selection and layer type
     const availableTools = [];
     if (selection && selection.length === 1 && selection[0].getGeometry().getType() === 'LineString') {
@@ -267,6 +364,17 @@ const EditorToolbar = function EditorToolbar(options = {}) {
       document.addEventListener('changeEdit', onChangeEdit);
       document.addEventListener('editsChange', toggleSave);
       document.addEventListener('toggleEdit', onToggleEdit);
+      // SKA EditorSnap: Listen for editor tool state changes and update UI
+      document.addEventListener('editorToolState', (e) => {
+        // SKA EditorSnap: Extract trace and snap state from event
+        const { trace, snap } = e.detail || {};
+        // SKA EditorSnap: Sync icon to match current snap/trace state
+        let state = 'none';
+        if (snap && trace) state = 'snaptrace';
+        else if (snap) state = 'snap';
+        else state = 'none';
+        setSnapToolsState(state, false);
+      });
       component = this;
     },
     onRender() {

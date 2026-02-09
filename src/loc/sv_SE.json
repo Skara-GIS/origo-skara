@@ -197,6 +197,11 @@
           "searchlistMakeSelectionButtonText": "Gör ett urval i kartan",
           "searchlistTitle": "Sökresultat för",
           "hintText": "Sök..."
+        },
+        "editor": {
+          "toolsLabel": "Verktyg",
+          "trace": "Spårning",
+          "snap": "Snappning"
         }
     },
     "style": {

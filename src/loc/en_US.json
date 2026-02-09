@@ -196,8 +196,11 @@
           "searchlistExportButtonText": "Export",
           "searchlistMakeSelectionButtonText": "Make a selection in the map",
           "searchlistTitle": "Search results for",
-          "hintText": "Search..."
-        }
+          "hintText": "Search..."        },
+        "editor": {
+          "toolsLabel": "Tools",
+          "trace": "Trace",
+          "snap": "Snap"        }
         
     },
     "style": {

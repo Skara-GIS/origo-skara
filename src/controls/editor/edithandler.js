@@ -785,6 +785,17 @@ function setInteractions(drawType) {
   }
 }
 
+/**
+ * Responds to 'queryEditorToolState' by dispatching editorToolState with current state
+ */
+function onQueryEditorToolState() {
+  const detail = {
+    trace: !!useTrace,
+    snap: viewer.getLayer(currentLayer) ? !!viewer.getLayer(currentLayer).get('snap') : undefined
+  };
+  document.dispatchEvent(new CustomEvent('editorToolState', { detail }));
+}
+
 /** Closes all modals and resets breadcrumbs */
 function closeAllModals() {
   // Close all modals before resetting breadcrumbs to get rid of tags in DOM
@@ -920,6 +931,68 @@ function startDraw() {
     setActive('draw');
     hasDraw = true;
     dispatcher.emitChangeEdit('draw', true);
+  }
+}
+
+/**
+ * Handles toggling of editor tools from toolbar (trace / snap).
+ * Expects CustomEvent 'toggleEditorTool' with detail { tool: 'trace'|'snap', active: boolean }
+ */
+function onToggleEditorTool(e) {
+  const { tool, active, preserveDraw } = e.detail || {};
+  // SKA EditorSnap: Preserve draw state by updating snap/trace without rebuilding interactions
+  if (preserveDraw) {
+    if (tool === 'trace') {
+      useTrace = !!active;
+      if (traceHighligtLayer) traceHighligtLayer.setVisible(useTrace);
+      const detail = {
+        trace: !!useTrace,
+        snap: viewer.getLayer(currentLayer) ? !!viewer.getLayer(currentLayer).get('snap') : undefined
+      };
+      document.dispatchEvent(new CustomEvent('editorToolState', { detail }));
+    } else if (tool === 'snap') {
+      const layer = viewer.getLayer(currentLayer);
+      const newVal = !!active;
+      if (layer) layer.set('snap', newVal);
+      if (editLayers && editLayers[currentLayer]) editLayers[currentLayer].set('snap', newVal);
+      // SKA EditorSnap: Update snap interactions without recreating draw
+      if (snap) {
+        snap.forEach((snapInteraction) => { map.removeInteraction(snapInteraction); });
+        snap = null;
+      }
+      if (newVal) {
+        const selectionSource = featureInfo.getSelectionLayer().getSource();
+        snapSources = editLayers[currentLayer].get('snapLayers')
+          ? getSnapSources(editLayers[currentLayer].get('snapLayers'))
+          : [editLayers[currentLayer].get('source')];
+        snapSources.push(selectionSource);
+        snap = addSnapInteraction(snapSources);
+      }
+      const detail = {
+        trace: !!useTrace,
+        snap: newVal
+      };
+      document.dispatchEvent(new CustomEvent('editorToolState', { detail }));
+    }
+    return;
+  }
+
+  // SKA EditorSnap: Default behavior - recreate interactions (old flow)
+  const { tool: ttool, active: tactive } = e.detail || {};
+  if (ttool === 'trace') {
+    useTrace = !!tactive;
+    if (traceHighligtLayer) traceHighligtLayer.setVisible(useTrace);
+    if (typeof draw !== 'undefined') {
+      setInteractions();
+      if (hasDraw) setTimeout(() => { startDraw(); }, 0);
+    }
+  } else if (ttool === 'snap') {
+    const layer = viewer.getLayer(currentLayer);
+    const newVal = !!tactive;
+    if (layer) layer.set('snap', newVal);
+    if (editLayers && editLayers[currentLayer]) editLayers[currentLayer].set('snap', newVal);
+    setInteractions();
+    if (typeof draw !== 'undefined' && hasDraw) setTimeout(() => { startDraw(); }, 0);
   }
 }
 
@@ -2058,6 +2131,9 @@ export default function editHandler(options, v) {
       document.addEventListener(dispatcher.EDIT_CHILD_EVENT, onEditChild);
       document.addEventListener(dispatcher.ADD_CHILD_EVENT, onAddChild);
       document.addEventListener(dispatcher.DELETE_CHILD_EVENT, onDeleteChild);
+      // Toolbar tools: trace / snap
+      document.addEventListener('toggleEditorTool', onToggleEditorTool);
+      document.addEventListener('queryEditorToolState', onQueryEditorToolState);
     },
     // These functions are called from Editor Component, possibly from its Api so change these calls with caution.
     createFeature: createFeatureApi,
