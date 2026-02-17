@@ -580,7 +580,7 @@ const Draw = function Draw(options = {}) {
           cls: 'flex column'
         });
         screenButton = Button({
-          cls: 'o-print padding-small margin-bottom-smaller icon-smaller round light box-shadow',
+          cls: 'o-print o-draw-screen-button padding-small margin-bottom-smaller icon-smaller round light box-shadow', // SKA custom class o-draw-screen-button for screen draw icon to fix border-radius clipping.
           click() {
             if (!isActive) {
               viewer.dispatch('toggleClickInteraction', { name: 'draw', active: true });
