@@ -56,4 +56,10 @@
     .o-draw-stylewindow ul li {
         float: left;
     }
+    // SKA custom class o-draw-screen-button for screen draw icon to fix border-radius clipping.
+    .o-draw-screen-button [class*='icon'] > *,
+    .o-draw-screen-button [class^='icon'] > * {
+        border-radius: 40% !important;
+        overflow: visible !important;
+    }
 }
