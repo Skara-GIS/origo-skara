@@ -8,7 +8,9 @@ const Editor = function Editor(options = {}) {
     autoSave = true,
     isActive = true,
     featureList = true,
-    icon = '#ic_edit_24px' // SKA default icon with opt-in for setting custom icon
+    icon = '#ic_edit_24px', // SKA default icon with opt-in for setting custom icon
+    reuseIds = false,
+    maxUndoLevels = 100
   } = options;
   let editorButton;
   let target;
@@ -100,7 +102,8 @@ const Editor = function Editor(options = {}) {
         editableLayers: editableFeatureLayers,
         isActive,
         viewer,
-        modifyTools: options.modifyTools
+        modifyTools: options.modifyTools,
+        noUndo: maxUndoLevels === 0
       });
       const handlerOptions = Object.assign({}, options, {
         autoForm,
@@ -108,7 +111,9 @@ const Editor = function Editor(options = {}) {
         currentLayer,
         editableLayers,
         isActive,
-        featureList
+        featureList,
+        reuseIds,
+        maxUndoLevels
       });
       editHandler = EditHandler(handlerOptions, viewer);
       // Relay selected features from handler to toolbar so toolbar can calculate which tools are available for the current situation
@@ -209,7 +214,6 @@ const Editor = function Editor(options = {}) {
     createFeature,
     editFeatureAttributes,
     deleteFeature,
-
     changeActiveLayer: (layerName) => {
       // Only need to actually change layer if editor is active. Otherwise state is just set in toolbar and will
       // activate set layer when toggled visible
