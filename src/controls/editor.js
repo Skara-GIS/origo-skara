@@ -9,6 +9,7 @@ const Editor = function Editor(options = {}) {
     isActive = true,
     featureList = true,
     icon = '#ic_edit_24px', // SKA default icon with opt-in for setting custom icon
+    localization,
     reuseIds = false,
     maxUndoLevels = 100
   } = options;
@@ -25,6 +26,15 @@ const Editor = function Editor(options = {}) {
 
   /** The handler were all state is kept */
   let editHandler;
+
+  /**
+   * Helper to localize strings. Is passed to underlaying functions as well
+   * @param {*} key Key to locale dict
+   * @returns string in the correct language
+   */
+  function localize(key) {
+    return localization.getStringByKeys({ targetParentKey: 'editor', targetKey: key });
+  }
 
   const toggleState = function toggleState() {
     const detail = {
@@ -101,6 +111,7 @@ const Editor = function Editor(options = {}) {
         currentLayer,
         editableLayers: editableFeatureLayers,
         isActive,
+        localizeFunc: localize,
         viewer,
         modifyTools: options.modifyTools,
         noUndo: maxUndoLevels === 0
@@ -112,6 +123,7 @@ const Editor = function Editor(options = {}) {
         editableLayers,
         isActive,
         featureList,
+        localizeFunc: localize,
         reuseIds,
         maxUndoLevels
       });
@@ -178,7 +190,7 @@ const Editor = function Editor(options = {}) {
           toggleState();
         },
         icon, // SKA default icon with opt-in for setting custom icon
-        tooltipText: 'Redigera',
+        tooltipText: localize('toolTip'),
         tooltipPlacement: 'east',
         state,
         methods: {
