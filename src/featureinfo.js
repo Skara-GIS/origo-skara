@@ -278,7 +278,7 @@ const Featureinfo = function Featureinfo(options = {}) {
     getContent[attributeType] = fn;
     return getContent;
   };
-
+  // SKA modal-medium
   const addLinkListener = function addLinkListener(el) {
     // Check if element already has a listener
     if (el && !el.hasAttribute('onClickModal')) {
@@ -290,6 +290,11 @@ const Featureinfo = function Featureinfo(options = {}) {
           case 'modal-full':
           {
             modalStyle = 'max-width:unset;width:98%;height:98%;resize:both;overflow:auto;display:flex;flex-flow:column;';
+            break;
+          }
+          case 'modal-medium':
+          {
+            modalStyle = 'max-width:unset;width:55%;height:55%;resize:both;overflow:auto;display:flex;flex-flow:column;';
             break;
           }
           default:
