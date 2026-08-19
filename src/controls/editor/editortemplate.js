@@ -43,11 +43,11 @@ export default function createTemplate(localizeFunc) {
       </button>
     </div>
     <div class="o-popover-container">
-      <button id="o-editor-snaptools" class="o-button-lg o-tooltip" style="cursor: pointer;" aria-label="Verktyg" type="button" name="button">
+      <button id="o-editor-snaptools" class="o-button-lg o-tooltip" style="cursor: pointer;" aria-label="${localizeFunc('toolsLabel')}" type="button" name="button">
         <svg class="o-icon-24" id="o-editor-snap-svg">
             <use id="o-editor-snap-icon" xlink:href="#fa-magnet"></use>
         </svg>
-        <span data-tooltip="Verktyg" data-placement="north"></span>
+        <span data-tooltip="${localizeFunc('toolsLabel')}" data-placement="north"></span>
       </button>
     </div>
      <div class="o-popover-container">

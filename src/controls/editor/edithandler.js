@@ -1347,8 +1347,9 @@ function onAttributesSave(features, attrs) {
   document.getElementById(`o-save-button-${currentLayer}`).addEventListener('click', (e) => {
     const editEl = {};
     const valid = {};
-    let checkboxValues = [];
     attrs.forEach((attribute) => {
+      // SKA Fix for EditorSnap: keep checkbox values isolated per checkbox group.
+      let checkboxValues = [];
       // Get the input container class
       const containerClass = `.${attribute.elId}`;
       // Get the input attributes

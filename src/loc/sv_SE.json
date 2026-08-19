@@ -55,7 +55,10 @@
             "typeMore": "Skriv mer för att få förslag",
             "undoTooltip": "Ångra",
             "videoDelete": "Ta bort video",
-            "videoNoSupport": "Din webbläsare stödjer inte video-taggen"
+            "videoNoSupport": "Din webbläsare stödjer inte video-taggen",
+            "toolsLabel": "Verktyg",
+            "trace": "Spåra",
+            "snap": "Snappa"
         },
         "measure": {
             "layerTitle": "Mätresultat",
@@ -251,11 +254,6 @@
           "searchlistMakeSelectionButtonText": "Gör ett urval i kartan",
           "searchlistTitle": "Sökresultat för",
           "hintText": "Sök..."
-        },
-        "editor": {
-          "toolsLabel": "Verktyg",
-          "trace": "Spårning",
-          "snap": "Snappning"
         }
     },
     "serviceWorker": {

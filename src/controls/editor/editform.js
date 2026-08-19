@@ -82,12 +82,13 @@ const createForm = function createForm(obj, opts = {}) {
           }
           textboxVal = checked ? matchingValue.split(`${freetextOptionValueSeparator}`)[1] : '';
           disable = checked ? '' : ' disabled';
-          el += `<input id="${id}-${index}" type="checkbox" data-index="${index}" class="o-editor-input" aria-label="${localizeFunc('checkboxGroupActivate')} ${label} ${value}" value="${value}"${checked}> ${option}: `;
+          // SKA Fix for EditorSnap: checkbox saving looks up these inputs by name.
+          el += `<input id="${id}-${index}" name="${name}" type="checkbox" data-index="${index}" class="o-editor-input" aria-label="${localizeFunc('checkboxGroupActivate')} ${label} ${value}" value="${value}"${checked}> ${option}: `;
           el += `<input id="${id}-${index}-text" type="text" value="${textboxVal}"${maxLength} style="width: auto; padding:0; margin:0; line-height:1.3rem;" class="o-editor-input" aria-label="${ariaText}" ${disable} autocomplete="off">`;
           el += '<br>';
         } else {
           checked = val.includes(value.trim()) ? ' checked' : '';
-          el += `<input id="${id}-${index}" type="checkbox" data-index="${index}" class="o-editor-input" aria-label="${ariaText}" value="${value}"${checked}> ${option}<br>`;
+          el += `<input id="${id}-${index}" name="${name}" type="checkbox" data-index="${index}" class="o-editor-input" aria-label="${ariaText}" value="${value}"${checked}> ${option}<br>`;
         }
       });
       el += '<br></div>';
