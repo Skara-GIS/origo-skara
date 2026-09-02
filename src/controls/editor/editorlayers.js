@@ -10,6 +10,8 @@ let dropdown;
 export default function editorLayers(editableLayers, v, optOptions = {}) {
   viewer = v;
   editableLayers.reverse(); // SKA reverse editableLayers
+  const selectableLayers = editableLayers.filter((layerName) => !viewer.getLayer(layerName).get('locked')); // SKA hide locked layers from editor layer list
+
   function selectionModel(layerNames) {
     const selectOptions = layerNames.map((layerName) => {
       const obj = {};
@@ -25,8 +27,8 @@ export default function editorLayers(editableLayers, v, optOptions = {}) {
   const target = 'editor-toolbar-layers-dropdown';
   const defaultOptions = {
     target,
-    selectOptions: selectionModel(editableLayers),
-    activeLayer: editableLayers[0]
+    selectOptions: selectionModel(selectableLayers), // SKA hide locked layers from editor layer list
+    activeLayer: selectableLayers[0] // SKA hide locked layers from editor layer list
   };
   const renderOptions = Object.assign(defaultOptions, optOptions);
 
