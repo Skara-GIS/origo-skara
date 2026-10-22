@@ -4,6 +4,7 @@ import hatchYellowStyle from './stylefunctions/hatchyellow';
 import hatchPinkStyle from './stylefunctions/hatchpink';
 import hatchGreyStyle from './stylefunctions/hatchgrey';
 import hatchDotBlueStyle from './stylefunctions/hatch_dot_blue';
+import ngpDetaljplanStyle from './stylefunctions/ngpdetaljplan';
 
 const customStyles = {
   default: defaultStyle,
@@ -11,7 +12,8 @@ const customStyles = {
   hatchyellow: hatchYellowStyle,
   hatchpink: hatchPinkStyle,
   hatchgrey: hatchGreyStyle,
-  hatchdotblue: hatchDotBlueStyle
+  hatchdotblue: hatchDotBlueStyle,
+  ngpdetaljplan: ngpDetaljplanStyle
 };
 
 export default function styleFunctions(customStyle, params) {
